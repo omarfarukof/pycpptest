@@ -3,6 +3,14 @@
 import os
 import pycpptest as pct
 
+# variables
+MATCH_CHAR = True
+
+# DEBUG
+# pct.DEBUG = False
+
+
+
 # Get the name of the Python file
 build_dir = "build"
 filename = os.path.basename(__file__)
@@ -11,7 +19,7 @@ problem : str = pct.get_problem(filename)
 build_problem : str = os.path.join(build_dir,problem)
 
 # Extract test cases from cph file
-cph_testcases = pct.get_test_cases_cph(problem)
+cph_testcases = pct.get_test_cases_cph(problem , dirname=dirname)
 
 my_testcases = [
     # ("Test_in_01" , "Test_out_01" ),
@@ -20,9 +28,21 @@ my_testcases = [
 
 gen_testcases = []
 
-def verify_output(input , run_output, expected_output, match_char=True)->bool:
+def verify_output(input , run_output, expected_output, match_char=MATCH_CHAR)->bool:
     if match_char:
-        return run_output == expected_output
+        run_output = [x.rstrip() for x in run_output.split("\n") if x not in ["\n", "", " "] ]
+        expected_output = [x.rstrip() for x in expected_output.split("\n") if x not in ["\n", "", " "] ]
+        run_output = "\n".join(run_output)
+        expected_output = "\n".join(expected_output)
+        if run_output != expected_output:
+            if pct.DEBUG:
+                pct.col_print(f"len(run_output): {len(run_output)}" , color="yellow")
+                pct.col_print(f"len(expected_output): {len(expected_output)}" , color="yellow")
+                pct.col_print(f"run_output: {run_output.encode()}" , color="yellow")
+                pct.col_print(f"expected_output: {expected_output.encode()}" , color="yellow")
+            return False
+        else:
+            return True
     else:
         # TODO: Write Verification Logic
         # 
@@ -44,7 +64,7 @@ def test_cases(test_in , test_out , build_problem , Test_Case_No=1, No_Cases=1)-
     input = test_in
     run_output = pct.run_problem(input, build_problem)
     expected_output = test_out
-    if verify_output(input, run_output, expected_output):
+    if verify_output(input, run_output, expected_output , match_char=MATCH_CHAR):
         pct.g_print(f"Passed CPH Test Case {Test_Case_No} of {No_Cases}")
         return True
     else:
@@ -69,5 +89,5 @@ if __name__ == "__main__":
     pct.test_code(gen_testcases , build_problem , verify_output , Test_Name="GEN")
 
     if pct.DEBUG:
-        pct.test_code(pct.DEBUG_testcases , build_problem , verify_output, benchmark=True , Test_Name="DEBUG")
+        pct.test_code(pct.DEBUG_testcases , build_problem , verify_output , Test_Name="DEBUG")
 
