@@ -240,7 +240,7 @@ def test_code(testcases , build_problem , verify_output, benchmark=False , Test_
         center_print(f"[ Test {Test_Name} Passed ]", prt=g_print)
 
 
-test_run_py="""#!/usr/bin/env -S uv run
+test_run_py=r"""#!/usr/bin/env -S uv run
 
 import os
 import pycpptest as pct
@@ -335,7 +335,7 @@ if __name__ == "__main__":
 
 """
 
-create_test_py="""#!/usr/bin/env -S uv run
+create_test_py=r"""#!/usr/bin/env -S uv run
 
 import sys
 import pycpptest as pct
@@ -350,7 +350,7 @@ else:
 
 """
 
-run_cpp_test="""#!/usr/bin/env -S uv run
+run_cpp_test=r"""#!/usr/bin/env -S uv run
 
 import sys
 import pycpptest as pct
